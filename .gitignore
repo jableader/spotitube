@@ -113,5 +113,5 @@ ENV/
 *.userosscache
 *.sln.docstates
 
-*secrets.py
+/spotitube/secrets.py
 /spotitube/youtube.Debug.py
