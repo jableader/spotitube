@@ -100,4 +100,8 @@ ENV/
 # mypy
 .mypy_cache/
 
+#VS Shit
+.pyprof
+.Debug.py
+
 secrets.py
