@@ -2,6 +2,23 @@ import requests, base64, json
 
 import secrets
 
+class Track:
+    def __init__(self, name, artist, year):
+        self.name = name
+        self.artist = artist
+        self.year = year
+
+    def __str__(self):
+        return "%s: %s (%s)" % (self.artist, self.name, self.year)
+
+class Playlist:
+    def __init__(self, name, tracks):
+        self.name = name
+        self.tracks = tracks
+
+    def __str__(self):
+        return "Playlist('%s', %d)" % (self.name, len(self.tracks))
+
 def get_token(clientid, clientsecret):
     creds = bytearray(clientid + ':' + clientsecret, 'ansi')
     headers = {'Authorization': 'Basic ' + str(base64.b64encode(creds))[2:-1] }
@@ -14,22 +31,17 @@ def get_token(clientid, clientsecret):
 def _add_token(token, **headers):
     return { 'Authorization': 'Bearer ' + token, **headers}
 
-def _get_track_data(track):
+def _to_track(track):
     artist = track['artists'][0]['name']
     name = track['name']
     year = track['album']['release_date'][:4]
 
-    return {'artist': artist, 'name': name, 'year': year}
+    return Track(name, artist, year}
 
-def get_tracks(token, userId, playlistId):
+def get_playlist(token, userId, playlistId):
     r = requests.get('https://api.spotify.com/v1/users/%s/playlists/%s' %(userId, playlistId), headers=_add_token(token))
     r.raise_for_status()
 
-    return [_get_track_data(track['track']) for track in r.json()['tracks']['items']]
-
-print("Getting token")
-token = get_token(secrets.CLIENT_ID, secrets.CLIENT_SECRET)
-
-print("Getting tracks")
-#spotify:user:spotify:playlist:37i9dQZF1DX5WTH49Vcnqp
-print(get_tracks(token, 'spotify', '37i9dQZF1DX5WTH49Vcnqp'))
+    data = r.json()
+    tracks = [_to_track(track['track']) for track in data['tracks']['items']]
+    return Playlist(data['name'], tracks)
