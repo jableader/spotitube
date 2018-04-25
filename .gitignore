@@ -104,4 +104,14 @@ ENV/
 .pyprof
 .Debug.py
 
-secrets.py
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+/spotitube/secrets.py
+/spotitube/youtube.Debug.py
