@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>de836fb5-e478-4998-b491-11e991db0bc2</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>spotitube.py</StartupFile>
+    <StartupFile>youtube.Debug.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,9 +21,13 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="poc.py" />
     <Compile Include="secrets.py" />
-    <Compile Include="spotitube.py" />
+    <Compile Include="youtube.Debug.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="youtube.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
