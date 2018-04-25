@@ -4,8 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>577e0637-7cfa-4c8b-bf9e-d6511cd05e92</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>youtube.Debug.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -24,6 +23,7 @@
   <ItemGroup>
     <Compile Include="secrets.py" />
     <Compile Include="spotify.py" />
+    <Compile Include="youtube.Debug.py" />
     <Compile Include="youtube.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
