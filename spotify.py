@@ -15,7 +15,6 @@ def add_token(token, **headers):
     return { 'Authorization': 'Bearer ' + token, **headers}
 
 def get_track_data(track):
-    print(track)
     artist = track['artists'][0]['name']
     name = track['name']
     year = track['album']['release_date'][:4]
@@ -30,7 +29,6 @@ def get_tracks(token, userId, playlistId):
 
 print("Getting token")
 token = get_token(secrets.CLIENT_ID, secrets.CLIENT_SECRET)
-
 
 print("Getting tracks")
 #spotify:user:spotify:playlist:37i9dQZF1DX5WTH49Vcnqp
