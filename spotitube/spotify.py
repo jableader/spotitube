@@ -1,7 +1,5 @@
 import requests, base64, json
 
-import secrets
-
 class Track:
     def __init__(self, name, artist, year):
         self.name = name
@@ -36,7 +34,7 @@ def _to_track(track):
     name = track['name']
     year = track['album']['release_date'][:4]
 
-    return Track(name, artist, year}
+    return Track(name, artist, year)
 
 def get_playlist(token, userId, playlistId):
     r = requests.get('https://api.spotify.com/v1/users/%s/playlists/%s' %(userId, playlistId), headers=_add_token(token))
