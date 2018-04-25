@@ -1,2 +1,3 @@
 CLIENT_ID = ''
 CLIENT_SECRET = ''
+YOUTUBE_API_KEY = ''
