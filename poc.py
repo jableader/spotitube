@@ -14,9 +14,24 @@ def get_token(clientid, clientsecret):
 def add_token(token, **headers):
     return { 'Authorization': 'Bearer ' + token, **headers}
 
-def get_tracks(token, userId, playlistId):
-    resp = requests.get('https://api.spotify.com/v1/users/%s/playlists/%s' %(userId, playlistId), headers=add_token(token))
-    
+def get_track_data(track):
+    print(track)
+    artist = track['artists'][0]['name']
+    name = track['name']
+    year = track['album']['release_date'][:4]
 
+    return {'artist': artist, 'name': name, 'year': year}
+
+def get_tracks(token, userId, playlistId):
+    r = requests.get('https://api.spotify.com/v1/users/%s/playlists/%s' %(userId, playlistId), headers=add_token(token))
+    r.raise_for_status()
+
+    return [get_track_data(track['track']) for track in r.json()['tracks']['items']]
+
+print("Getting token")
 token = get_token(secrets.CLIENT_ID, secrets.CLIENT_SECRET)
-resp = print(resp.text)
+
+
+print("Getting tracks")
+#spotify:user:spotify:playlist:37i9dQZF1DX5WTH49Vcnqp
+print(get_tracks(token, 'spotify', '37i9dQZF1DX5WTH49Vcnqp'))
