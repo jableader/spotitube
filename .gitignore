@@ -101,8 +101,8 @@ ENV/
 .mypy_cache/
 
 #VS Shit
-.pyprof
-.Debug.py
+*.pyprof
+*.Debug.py
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -113,5 +113,4 @@ ENV/
 *.userosscache
 *.sln.docstates
 
-/spotitube/secrets.py
-/spotitube/youtube.Debug.py
+spotitube/secrets.py
