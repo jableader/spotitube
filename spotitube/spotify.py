@@ -1,4 +1,4 @@
-import requests, base64, json
+import requests, base64, json, datetime
 
 class Track:
     def __init__(self, name, artist, year):
@@ -17,17 +17,31 @@ class Playlist:
     def __str__(self):
         return "Playlist('%s', %d)" % (self.name, len(self.tracks))
 
+class Token:
+    def __init__(self, access_token, expires_in):
+        self.access_token = access_token
+        self.expire_date = datetime.date.today()
+
+    def is_expired(self):
+        return datetime.date.today() > self.expire_date
+
+spotify_auth_token = Token('', expires_in=0)
 def get_token(clientid, clientsecret):
-    creds = bytearray(clientid + ':' + clientsecret, 'ansi')
-    headers = {'Authorization': 'Basic ' + str(base64.b64encode(creds))[2:-1] }
+    global spotify_auth_token
+    if not spotify_auth_token.is_expired:
+        return token
+
+    creds = clientid + ':' + clientsecret
+    headers = {'Authorization': 'Basic ' + str(base64.b64encode(bytearray(creds))) }
     data = { 'grant_type': 'client_credentials' }
     res = requests.post('https://accounts.spotify.com/api/token', headers=headers, data=data)
     res.raise_for_status()
+    spotify_auth_token = Token(**res.json())
 
-    return res.json()['access_token']
+    return spotify_auth_token
 
 def _add_token(token, **headers):
-    return { 'Authorization': 'Bearer ' + token, **headers}
+    return { 'Authorization': 'Bearer ' + token.access_token, **headers}
 
 def _to_track(track):
     artist = track['artists'][0]['name']

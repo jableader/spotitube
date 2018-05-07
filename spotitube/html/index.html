@@ -1,0 +1,33 @@
+<html>
+<head>
+
+</head>
+
+<body>
+	<input type="text" id="txtSpotifylink" value="https://open.spotify.com/user/spotify/playlist/37i9dQZF1DXcBWIGoYBM5M" />
+	<button id="btnGo">Find</button>
+	<div id="result">
+	</div>
+	<script type="text/javascript" src="/static/js/jquery.js"></script>
+	<script type="text/javascript">
+		$('#btnGo').click(function() {
+			// Format https://open.spotify.com/user/spotify/playlist/37i9dQZF1DXcBWIGoYBM5M
+			var regex = /user\/(\w+)\/playlist\/(\w+)/g
+			var match = regex.exec($("#txtSpotifylink").val())
+			if (!match) {
+				alert("Not a valid code")
+				return
+			}
+
+			$.post(`/api/createfor/${match[1]}/${match[2]}`, function(data) {
+				var tracks = JSON.parse(data);
+
+				$("#result").html(
+					$('<ul>')
+						.append(tracks.map(t => $('<li>').html(t['name'])))
+				)
+			});
+		});
+	</script>
+</body>
+</html>
