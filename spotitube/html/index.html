@@ -19,14 +19,7 @@
 				return
 			}
 
-			$.post(`/api/createfor/${match[1]}/${match[2]}`, function(data) {
-				var tracks = JSON.parse(data);
-
-				$("#result").html(
-					$('<ul>')
-						.append(tracks.map(t => $('<li>').html(t['name'])))
-				)
-			});
+			window.location.href = `/create/${match[1]}/${match[2]}`;
 		});
 	</script>
 </body>

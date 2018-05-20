@@ -1,4 +1,7 @@
-import spotify, secrets, flask, google_auth_oauthlib.flow, os
+import os, json, flask
+import spotify, secrets, youtube
+import google_auth_oauthlib.flow, google
+import google.oauth2.credentials, google_auth_oauthlib.flow, googleapiclient.discovery
 
 app = flask.Flask(__name__)
 app.secret_key = secrets.APP_SECRET_KEY
@@ -19,9 +22,24 @@ def get_page(name):
     with open('html/%s.html' % name, 'r') as f:
         return f.read()
 
-#Example: /api/createfor/spotify/37i9dQZF1DWTcqUzwhNmKv
-@app.route("/api/createfor/<userid>/<playlistid>", methods=['POST'])
-def api_create(userid, playlistid):
+def get_valid_credentials():
+    if 'credentials' in flask.session:
+        creds = google.oauth2.credentials.Credentials(**flask.session['credentials'])
+        if not creds.valid:
+            try:
+                creds.refresh()
+            except google.auth.exceptions.RefreshError:
+                return None
+
+        return creds
+
+    return None
+
+def get_client():
+    return googleapiclient.discovery.build('youtube', 'v3', credentials=get_valid_credentials())
+
+@app.route("/create/<userid>/<playlistid>")
+def createforplaylist(userid, playlistid):
     app.logger.debug('Creating token')
     token = spotify.get_token(secrets.SPOTIFY_CLIENT_ID, secrets.SPOTIFY_CLIENT_SECRET)
 
@@ -29,8 +47,14 @@ def api_create(userid, playlistid):
     playlist = spotify.get_playlist(token, userid, playlistid)
 
     app.logger.debug('Found %s', str(playlist))
-    return json.dumps([{ t.__dict__ for t in playlist.tracks}])
 
+    client = get_client()
+    withvids = youtube.findvideos(client, playlist.tracks)
+
+    app.logger.debug("Creating %s of %d videos" % (playlist.name, len(withvids)))
+    playlistId = youtube.createplaylist(client, playlist.name, [v for t, v in withvids])
+
+    return flask.redirect("https://www.youtube.com/playlist?list=%s" % playlistId)
 
 @app.route('/oauth2callback')
 def oauth2callback():
@@ -54,8 +78,9 @@ def oauth2callback():
   return flask.redirect("/")
 
 @app.route("/")
-def hello():
-    if 'credentials' not in flask.session:
+def index():
+    creds = get_valid_credentials()
+    if not creds:
         # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
         authorization_url, state = flow.authorization_url(
             # Enable offline access so that you can refresh an access token without

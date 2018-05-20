@@ -9,6 +9,9 @@ class Track:
     def __str__(self):
         return "%s: %s (%s)" % (self.artist, self.name, self.year)
 
+    def todict(self):
+        return { 'name': self.name, 'artist': self.artist, 'year': self.year }
+
 class Playlist:
     def __init__(self, name, tracks):
         self.name = name
@@ -18,7 +21,7 @@ class Playlist:
         return "Playlist('%s', %d)" % (self.name, len(self.tracks))
 
 class Token:
-    def __init__(self, access_token, expires_in):
+    def __init__(self, access_token, expires_in, **kwargs):
         self.access_token = access_token
         self.expire_date = datetime.date.today()
 
@@ -31,8 +34,8 @@ def get_token(clientid, clientsecret):
     if not spotify_auth_token.is_expired:
         return token
 
-    creds = clientid + ':' + clientsecret
-    headers = {'Authorization': 'Basic ' + str(base64.b64encode(bytearray(creds))) }
+    creds = bytearray(clientid + ':' + clientsecret, 'utf8')
+    headers = {'Authorization': 'Basic ' + base64.b64encode(creds).decode('utf8') }
     data = { 'grant_type': 'client_credentials' }
     res = requests.post('https://accounts.spotify.com/api/token', headers=headers, data=data)
     res.raise_for_status()
