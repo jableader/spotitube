@@ -1,16 +1,17 @@
-import requests, base64, json, datetime
+import requests, base64, json, datetime, secrets
 
 class Track:
-    def __init__(self, name, artist, year):
+    def __init__(self, name, artist, year, art):
         self.name = name
         self.artist = artist
         self.year = year
+        self.art = art
 
     def __str__(self):
         return "%s: %s (%s)" % (self.artist, self.name, self.year)
 
     def todict(self):
-        return { 'name': self.name, 'artist': self.artist, 'year': self.year }
+        return { 'name': self.name, 'artist': self.artist, 'year': self.year, 'art': self.art }
 
 class Playlist:
     def __init__(self, name, tracks):
@@ -29,7 +30,7 @@ class Token:
         return datetime.date.today() > self.expire_date
 
 spotify_auth_token = Token('', expires_in=0)
-def get_token(clientid, clientsecret):
+def get_token(clientid=secrets.SPOTIFY_CLIENT_ID, clientsecret=secrets.SPOTIFY_CLIENT_SECRET):
     global spotify_auth_token
     if not spotify_auth_token.is_expired:
         return token
@@ -49,12 +50,14 @@ def _add_token(token, **headers):
 def _to_track(track):
     artist = track['artists'][0]['name']
     name = track['name']
-    year = track['album']['release_date'][:4]
+    album = track['album']
+    year = album['release_date'][:4]
+    image = album['images'][0]['url']
 
-    return Track(name, artist, year)
+    return Track(name, artist, year, image)
 
-def get_playlist(token, userId, playlistId):
-    r = requests.get('https://api.spotify.com/v1/users/%s/playlists/%s' %(userId, playlistId), headers=_add_token(token))
+def get_playlist(token, playlistId):
+    r = requests.get('https://api.spotify.com/v1/playlists/%s' % playlistId, headers=_add_token(token))
     r.raise_for_status()
 
     data = r.json()

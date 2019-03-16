@@ -1,7 +1,8 @@
-import requests, json, threading
+import requests, json, threading, logging
+logger = logging.getLogger(__name__)
 
 class Video:
-    def __init__(self, videoJSON):
+    def __init__(self, track, videoJSON):
         if not videoJSON['id']['kind'] == 'youtube#video':
             raise Exception('JSON was not a Youtube Video')
         self.id = videoJSON['id']['videoId']
@@ -9,6 +10,8 @@ class Video:
         self.publishDate = videoJSON['snippet']['publishedAt']
         self.title = videoJSON['snippet']['title']
         self.description = videoJSON['snippet']['description']
+        self.thumbnail = videoJSON['snippet']['thumbnails']['default']['url']
+        self.rank = _might_be_official(self, track)
 
     def __str__(self):
         return self.channelTitle + ' - ' + self.title
@@ -24,17 +27,15 @@ def _build_findquery(client, track):
         maxResults=10,
       )
 
-def _add_first_official(d, track):
+def _set_suggestions(d, track):
     def _inner(id, resp, ex):
-        hrank, hv = 0, None
-        for item in resp.get('items'):
-            video = Video(item)
-            vrank = _might_be_official(video, track)
-            if vrank > hrank:
-                hrank, hv = vrank, video
+        if ex is not None:
+            logger.error(ex)
+            return
 
-        if hv:
-            d[track] = hv
+        videos = [Video(item) for item in resp.get('items')]
+        videos.sort(lambda v1, v2: v1.rank - v2.rank)
+        d[track] = videos
 
     return _inner
 
@@ -60,15 +61,14 @@ def _might_be_official(video, track):
 
     return rank
 
-def findvideos(client, tracks):
+def find_videos(client, tracks):
     batch = client.new_batch_http_request()
     videos = {}
     for t in tracks:
-        batch.add(_build_findquery(client, t), _add_first_official(videos, t))
+        batch.add(_build_findquery(client, t), _set_suggestions(videos, t))
 
     batch.execute()
-    return [(t, videos[t]) for t in tracks if t in videos]
-
+    return videos
 
 def _build_addquery(client, playlistid, video):
     return client.playlistItems().insert(
@@ -83,10 +83,6 @@ def _build_addquery(client, playlistid, video):
             }
         }
     )
-
-def _addvideos(client, playlistid, videos):
-    for v in videos:
-        _build_addquery(client, playlistid, v).execute()
 
 def createplaylist(client, title, videos):
     # There is a bug in the youtube api, adding as a batch will cause videos to

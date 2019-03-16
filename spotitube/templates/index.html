@@ -1,9 +1,10 @@
-<html>
-<head></head>
-
-<body>
-	<form method="GET" action="createfor">
-		<input type="text" id="spotify_id">Spotify ID</input>
-	</form>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+	<form class="form-playlist text-center" action="/build">
+		<h1 class="h3 mb-3 font-weight-normal">Spotitube</h1>
+		<p class="lead">Enter a spotify URI to create a youtube playlist</p>
+		<label for="spotify_uri" class="sr-only">Spotify URI</label>
+		<input name="spotify_uri" type="text" class="form-control" placeholder="spotify:user:spotify:playlist:37i9dQZF1DX8gDIpdqp1XJ" required autofocus>
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Go</button>
+	</section>
+{% endblock %}

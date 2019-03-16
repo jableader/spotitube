@@ -1,0 +1,60 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: -ms-flexbox;
+  display: flex;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+
+.form-playlist {
+  -ms-flex-align: center;
+  width: 100%;
+  max-width: 660px;
+  padding: 15px;
+  margin: auto;
+}
+
+.form-playlist .form-control {
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.form-playlist .form-control:focus {
+  z-index: 2;
+}
+
+.form-playlist input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.track-row {
+  padding-top: 5px;
+}
+
+.track-art {
+  display: inline-block;
+  width: 150px;
+}
+
+.track-name {
+  font-weight: bold;
+  font-size: 1.25em;
+}
+
+.youtube-videos ul {
+  list-style: none;
+}
+
+.youtube-videos li {
+  display: inline;
+}

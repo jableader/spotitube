@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ playlist.name }}{% endblock %}
+{% block content %}
+	<div class="container">
+		<div class="row">
+			<h1>{{ playlist.name }}</h1>
+		</div>
+		{% for track in playlist.tracks %}
+			<div class="row track-row">
+				<div class="col-2">
+					<img class="track-art" src="{{ track.art }}" />
+				</div>
+				<div class="col-2">
+					<p class="track-name">{{ track.name }}</p>
+					<p class="track-artist">{{ track.artist }}</p>
+				</div>
+				<div class="col-8">
+					<div class="youtube-videos">
+						<ul>
+							{% for suggestion in suggestions[track] %}
+								<li>
+									<div class="suggestion">
+										<img class="suggestion-thumbnail" rc="{{ suggestion.thumbnail }}" />
+										<p>{{ suggestion.title }}</title>
+									</div>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+{% endblock %}
